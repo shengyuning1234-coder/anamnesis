@@ -1,0 +1,30 @@
+name: anamnesis
+services:
+  anamnesis:
+    image: anamnesis:2026.10.31-full
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUNDLE_EMBEDDING_MODEL: "${BUNDLE_EMBEDDING_MODEL:-1}"
+    restart: unless-stopped
+    init: true
+    shm_size: "1gb"
+    stop_grace_period: 40s
+    ports:
+      - "${BIND_ADDRESS:-0.0.0.0}:${APP_PORT:-5050}:5050"
+    environment:
+      TZ: Asia/Shanghai
+      APP_PUBLIC_URL: "${APP_PUBLIC_URL:-http://localhost:5050}"
+      ALLOW_INITIAL_SETUP: "${ALLOW_INITIAL_SETUP:-1}"
+      TRUSTED_PROXY: "${TRUSTED_PROXY:-}"
+      AUTO_DOWNLOAD_MODELS: "${AUTO_DOWNLOAD_MODELS:-1}"
+      PREFETCH_WHISPER: "${PREFETCH_WHISPER:-1}"
+    volumes:
+      - type: bind
+        source: ${WORDS_DATA_DIR:-./docker-data/words}
+        target: /data/words
+      - type: bind
+        source: ${WEBUI_DATA_DIR:-./docker-data/openwebui}
+        target: /data/openwebui

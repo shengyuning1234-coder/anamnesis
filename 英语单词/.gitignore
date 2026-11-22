@@ -1,0 +1,11 @@
+# 敏感配置（API Key）
+data/.apikey
+data/settings.json
+
+# 数据库文件
+data/*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo

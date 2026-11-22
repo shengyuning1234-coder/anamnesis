@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="app-prefix" content="{{ request.script_root }}">
+<script src="{{ url_for('static', filename='app-path.js') }}"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anamnesis / 忆溯</title>
+<link rel="manifest" href="{{ request.script_root }}/manifest.webmanifest">
+<meta name="theme-color" content="#5b4ae0">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20261121-layout">
+<link rel="stylesheet" href="{{ url_for('static', filename='upgrade.css') }}?v=20261121">
+<script>window.__INITIAL_APPEARANCE__ = {{ appearance | tojson }};</script>
+</head>
+<body>
+<div class="app-background-container" aria-hidden="true">
+  <img id="app-bg-image" class="app-background-image" alt="" style="display:none">
+  <div class="app-background-overlay"></div>
+</div>
+
+<!-- ===== 顶部导航 ===== -->
+<div class="page-bars">
+<header id="page-header" class="topbar">
+  <h1 class="logo">Anamnesis <small>/ 忆溯</small></h1>
+  <div class="topbar-right">
+    <button class="topbar-action" onclick="openGuide()">使用指南</button>
+    <button class="topbar-action" onclick="openAccountCenter()">账号</button>
+    <span id="header-stats" class="header-stats"></span>
+    <button class="topbar-action topbar-action--primary" onclick="openQuickEntry()">⚡ 快速录入</button>
+    <button class="topbar-action" onclick="openWordBook()">📚 词书</button>
+    <button class="topbar-action" onclick="openSettings()">⚙ 设置</button>
+  </div>
+</header>
+
+<!-- ===== Tab 导航 ===== -->
+<nav id="page-tabs" class="tab-nav" aria-label="主导航">
+  <button class="tab-btn active" data-tab="words">📖 单词本</button>
+  <button class="tab-btn" data-tab="study">📝 学习</button>
+  <button class="tab-btn" data-tab="groups">▦ 分组</button>
+  <button class="tab-btn" data-tab="reports">📊 报告</button>
+  <button class="tab-btn" data-tab="practice">＋ 录入</button>
+  <button class="tab-btn" data-tab="chat">◌ 对话</button>
+</nav>
+  <div class="layout-restore">
+    <button type="button" class="btn btn-sm btn-outline" onclick="toggleChrome('header')" aria-controls="page-header">展开顶栏</button>
+    <button type="button" class="btn btn-sm btn-outline" onclick="toggleChrome('nav')" aria-controls="page-tabs">展开标签栏</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  Tab 1: 单词本 -->
+<!-- ============================================================ -->
+<section id="tab-words" class="tab-content active">
+  <div class="panel-toolbar">
+    <span id="scope-label" class="scope-label">全部单词</span>
+    <input type="text" id="word-search" class="search-input" placeholder="🔍 搜索单词（英文/中文）..." oninput="searchWords()">
+    <button class="btn btn-primary" onclick="openAddWord()">➕ 录入新单词</button>
+    <button id="group-link-button" class="btn btn-outline hidden" onclick="openLinkWords()">关联已有词</button>
+    <select id="tag-filter" aria-label="按分类筛选" onchange="loadWords()"><option value="">全部分类</option></select>
+    <select id="word-sort" aria-label="排序" onchange="setSort(this.value)"><option value="time_desc">最近更新</option><option value="time_asc">最早添加</option><option value="word_asc">字母 A–Z</option><option value="word_desc">字母 Z–A</option><option value="proficiency_asc">熟练度低优先</option><option value="proficiency_desc">熟练度高优先</option></select>
+    <span id="word-count" class="count-badge">共 0 词</span>
+  </div>
+
+  <div class="split-pane">
+    <!-- 左侧列表 -->
+    <div class="word-list-pane">
+      <div id="word-list" class="word-list"></div>
+    </div>
+    <!-- 右侧详情 -->
+    <div class="word-detail-pane">
+      <div id="word-detail" class="word-detail-card">
+        <p class="placeholder">👆 点击左侧单词查看详情</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  Tab 2: 学习 -->
+<!-- ============================================================ -->
+<section id="tab-study" class="tab-content">
+  <!-- 状态面板 -->
+  <div id="study-status" class="study-status">
+    <div class="study-intro"><span class="eyebrow">A LITTLE EVERY DAY</span><h2>把今天的单词，留在记忆里。</h2><p>先理解，再回忆。学习进度在所有分组间同步。</p></div>
+    <div class="study-scope"><label for="study-group">学习范围</label><select id="study-group"><option value="">全部单词</option></select></div>
+    <div class="study-scope"><label for="question-source">出题方式</label><select id="question-source" aria-describedby="question-source-help"><option value="local">本地词典（默认）</option><option value="ai">AI 情境选择题</option></select><small id="question-source-help">AI 选项在后台准备整套题目，失败自动回退。拼写与仅释义训练沿用本地题目。</small></div>
+    <div class="status-grid">
+      <div class="stat-card"><span class="stat-val" id="stat-quota">20</span><span class="stat-label">每日配额</span></div>
+      <div class="stat-card"><span class="stat-val" id="stat-new">0</span><span class="stat-label">今日新学</span></div>
+      <div class="stat-card"><span class="stat-val" id="stat-reviewed">0</span><span class="stat-label">今日复习</span></div>
+      <div class="stat-card"><span class="stat-val" id="stat-due">0</span><span class="stat-label">待复习</span></div>
+    </div>
+    <div class="status-actions">
+      <button class="btn btn-primary btn-lg" onclick="learnNewWords()">📥 学习新词</button>
+      <button class="btn btn-accent btn-lg" id="btn-start-review" onclick="startReview()">🔄 开始复习测验</button>
+      <button class="btn btn-outline btn-lg" onclick="startReview('spelling')">✍ 拼写训练</button>
+    </div>
+    <div class="quota-row">
+      <label>每日新词配额：</label>
+      <input type="number" id="quota-input" value="20" min="1" max="200" class="quota-input" onchange="updateQuota()">
+    </div>
+  </div>
+  <div id="quiz-preparing" class="quiz-panel hidden"><div class="quiz-card"><h3>准备题目</h3><progress id="quiz-prep-progress"></progress><p id="quiz-prep-message"></p><small id="quiz-prep-detail"></small></div></div>
+
+  <!-- 测验面板（初始隐藏） -->
+  <div id="quiz-panel" class="quiz-panel hidden">
+    <div class="quiz-header">
+      <span id="quiz-mode" class="quiz-mode-badge"></span>
+      <span id="quiz-progress" class="quiz-progress"></span>
+      <span id="quiz-prof" class="quiz-prof"></span>
+    </div>
+    <div class="quiz-card">
+      <div id="quiz-prompt" class="quiz-prompt"></div>
+      <div id="quiz-hint" class="quiz-hint"></div>
+      <div id="quiz-extra" class="quiz-extra"></div>
+      <div id="quiz-dynamic" class="quiz-dynamic"></div>
+      <div id="quiz-feedback" class="quiz-feedback hidden"></div>
+    </div>
+    <div class="quiz-actions">
+      <button class="btn" id="btn-quiz-skip" onclick="nextQuizQuestion()">⏭ 跳过</button>
+      <button class="btn btn-outline" id="btn-quiz-finish" onclick="finishQuiz()">🏁 结束</button>
+    </div>
+  </div>
+</section>
+
+<section id="tab-groups" class="tab-content">
+  <div class="panel-toolbar"><div><span class="eyebrow">COLLECTIONS</span><h2>单词分组</h2></div><input id="group-search" class="search-input" placeholder="搜索分组名称或标签" oninput="renderGroups()"><button class="btn btn-primary" onclick="openGroupEditor()">＋ 新建分组</button><span id="group-count" class="count-badge"></span></div>
+  <div id="group-tag-filters" class="group-tag-filters"></div><div id="group-grid" class="group-grid"></div>
+</section>
+<section id="tab-practice" class="tab-content"><div id="intake-root"></div></section>
+<section id="tab-chat" class="tab-content"><div id="chat-placeholder" class="practice-welcome"><span class="eyebrow">READ · COLLECT · REMEMBER</span><h2>内置 AI 对话</h2><p>对话服务尚未就绪。当前可使用单词与学习功能；启动包含 OpenWebUI 的完整服务后，可在这里使用 AI 对话。</p><button class="btn btn-primary" onclick="loadChat()">重新连接内置对话</button></div><iframe id="chat-frame" title="OpenWebUI 对话" class="hidden" allow="clipboard-read; clipboard-write"></iframe></section>
+
+<!-- ============================================================ -->
+<!--  Tab 3: 报告 -->
+<!-- ============================================================ -->
+<section id="tab-reports" class="tab-content">
+  <div class="panel-toolbar">
+    <button class="btn btn-accent" onclick="generateReport()">🤖 生成今日报告</button>
+    <button class="btn btn-outline" onclick="loadReports()">🔄 刷新</button>
+  </div>
+  <div class="split-pane">
+    <div class="report-list-pane">
+      <div id="report-list" class="report-list"></div>
+    </div>
+    <div class="report-detail-pane">
+      <div id="report-detail" class="report-detail-card">
+        <p class="placeholder">👆 选择一份报告查看</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  模态层 -->
+<!-- ============================================================ -->
+<div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal(event)">
+  <div class="modal" id="modal-content" onclick="event.stopPropagation()"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+<details class="layout-controls"><summary aria-label="页面布局设置">▤ 页面布局</summary><div class="layout-menu"><button id="toggle-header" aria-controls="page-header" onclick="toggleChrome('header')" aria-expanded="true">收起顶栏</button><button id="toggle-nav" aria-controls="page-tabs" onclick="toggleChrome('nav')" aria-expanded="true">收起标签栏</button></div></details>
+
+<script src="{{ url_for('static', filename='meaning-format.js') }}?v=20261028"></script>
+<script src="{{ url_for('static', filename='app.js') }}?v=20261121"></script>
+<script>window.RECOVERED_BASE = {loadWords, selectWord, renderWordDetail, openWordModal, lookupWord, closeModal};</script>
+<script src="{{ url_for('static', filename='upgrade.js') }}?v=20261121"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='intake.css') }}?v=20261121">
+<script src="{{ url_for('static', filename='intake.js') }}?v=20261028"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='features.css') }}?v=20261121-layout">
+<script src="{{ url_for('static', filename='features.js') }}?v=20261121-layout"></script>
+</body>
+</html>

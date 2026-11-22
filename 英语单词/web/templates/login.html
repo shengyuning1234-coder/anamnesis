@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="app-prefix" content="{{ request.script_root }}">
+<script src="{{ url_for('static', filename='app-path.js') }}"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anamnesis</title>
+<style>
+  :root {
+    --primary: #5b4ae0; --primary-dark: #4535c4; --danger: #c5303e;
+    --text: #1e1b18; --text2: #5c554d; --text3: #7a7268;
+    --border-glass: rgba(255,255,255,.72); --focus-ring: rgba(91,74,224,.3);
+    --surface-card: rgba(255,255,255,.74); --surface-control: rgba(255,255,255,.78);
+    --highlight: rgba(255,255,255,.88); --radius-panel: 24px;
+    --shadow-float: 0 22px 58px rgba(35,29,68,.18), 0 2px 10px rgba(35,29,68,.08);
+    --focus-outline: 0 0 0 3px rgba(255,255,255,.88), 0 0 0 6px var(--focus-ring);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC","Microsoft YaHei",-apple-system,sans-serif;
+    color: var(--text); display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px; overflow-x: hidden;
+    background: radial-gradient(circle at 10% 5%, rgba(255,255,255,.8), transparent 30%), radial-gradient(circle at 92% 90%, rgba(144,218,184,.35), transparent 35%), linear-gradient(145deg, #e8e3ff 0%, #e8eefb 48%, #e4f2e9 100%);
+  }
+  body::before, body::after { content: ""; position: fixed; border-radius: 50%; filter: blur(4px); pointer-events: none; }
+  body::before { width: 34vw; height: 34vw; min-width: 280px; min-height: 280px; top: -12vw; right: -8vw; background: rgba(120,100,244,.2); }
+  body::after { width: 28vw; height: 28vw; min-width: 240px; min-height: 240px; bottom: -10vw; left: -5vw; background: rgba(87,197,142,.18); }
+  .login-card {
+    position: relative; z-index: 1; background: var(--surface-card); border: 1px solid var(--border-glass); border-radius: var(--radius-panel);
+    padding: 42px 38px; max-width: 420px; width: 100%; text-align: center;
+    box-shadow: var(--shadow-float), 0 1px 0 var(--highlight) inset; backdrop-filter: blur(28px) saturate(1.16); -webkit-backdrop-filter: blur(28px) saturate(1.16);
+  }
+  .login-card h1 { font-size: 1.6rem; letter-spacing: -.03em; margin-bottom: 6px; }
+  .login-card p { color: var(--text2); font-size: .9rem; margin-bottom: 26px; }
+  .form-group { margin-bottom: 17px; text-align: left; }
+  .form-group label { display: block; font-size: .85rem; font-weight: 700; color: var(--text2); margin-bottom: 7px; }
+  .form-group input {
+    width: 100%; padding: 13px 16px; font-size: 1rem; color: var(--text);
+    border: 1px solid rgba(92,85,77,.2); border-radius: 13px; font-family: inherit;
+    background: var(--surface-control); box-shadow: 0 1px 0 var(--highlight) inset, 0 2px 8px rgba(35,29,68,.05); transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  }
+  .form-group input:hover { border-color: rgba(91,74,224,.42); }
+  .form-group input:focus { outline: none; border-color: var(--primary); background: rgba(255,255,255,.96); box-shadow: var(--focus-outline); }
+  .form-group input::placeholder { color: var(--text3); }
+  .btn {
+    width: 100%; min-height: 46px; padding: 12px 18px; font-size: 1rem; font-weight: 700;
+    border: 1px solid rgba(255,255,255,.34); border-radius: 13px; cursor: pointer; color: #fff;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)); box-shadow: 0 7px 16px rgba(69,53,196,.28), 0 1px 0 rgba(255,255,255,.28) inset; transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+  }
+  .btn:hover { filter: brightness(1.05); transform: translateY(-2px); box-shadow: 0 12px 22px rgba(69,53,196,.34), 0 1px 0 rgba(255,255,255,.28) inset; }
+  .btn:active { transform: scale(.98); }
+  .btn:focus-visible { outline: none; box-shadow: var(--focus-outline), 0 7px 16px rgba(69,53,196,.28); }
+  .error { color: var(--danger); font-size: .85rem; font-weight: 700; margin-top: 10px; min-height: 20px; }
+  .account-link { border: 0; background: none; color: var(--primary); padding: 10px; font: inherit; cursor: pointer; text-decoration: underline; }
+  .login-card .form-hint { text-align: left; margin: 6px 0 16px; font-size: .8rem; }
+  .hidden { display: none; }
+  @media (max-width: 480px) { body { padding: 16px; } .login-card { padding: 34px 24px; border-radius: 20px; } }
+</style>
+</head>
+<body>
+<div class="login-card">
+  <h1>Anamnesis / 忆溯</h1>
+  <p id="login-desc">请设置访问密码</p>
+  <div id="form-setup" class="hidden">
+    <div class="form-group">
+      <label>设置密码（至少8位）</label>
+      <input type="password" id="pwd1" placeholder="请输入密码" autocomplete="new-password">
+    </div>
+    <div class="form-group">
+      <label>确认密码</label>
+      <input type="password" id="pwd2" placeholder="再次输入密码" autocomplete="new-password">
+    </div>
+    <button class="btn" onclick="doSetup()">🔒 设置密码并进入</button>
+    <div class="error" id="err1"></div>
+  </div>
+  <div id="form-login" class="hidden">
+    <div class="form-group"><label for="username-login">账号</label><input id="username-login" value="admin" autocomplete="username" placeholder="旧版账号为 admin"></div>
+    <div class="form-group">
+      <input type="password" id="pwd-login" placeholder="请输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <label style="display:block;margin:14px 0"><input type="checkbox" id="remember" checked> 记住此设备（180 天）</label><button class="btn" onclick="doLogin()">🔓 登录</button>
+    <div class="error" id="err2"></div>
+    <button class="account-link" id="register-button" onclick="showRegistration()">还没有账号？注册账号</button>
+  </div>
+  <form id="form-register" class="hidden" onsubmit="event.preventDefault();doRegister()">
+    <p id="registration-note" class="form-hint"></p>
+    <div id="registration-fields">
+      <div class="form-group"><label for="username-register">新账号</label><input id="username-register" autocomplete="username" minlength="3" maxlength="40" pattern="[A-Za-z0-9_.\-]{3,40}" required placeholder="3–40 位字母、数字、点、下划线或短横线"></div>
+      <div class="form-group"><label for="pwd-register">设置密码</label><input type="password" id="pwd-register" autocomplete="new-password" minlength="8" required placeholder="至少 8 位"></div>
+      <div class="form-group"><label for="pwd-register-confirm">确认密码</label><input type="password" id="pwd-register-confirm" autocomplete="new-password" minlength="8" required placeholder="再次输入密码"></div>
+      <button class="btn" id="register-submit" type="submit">注册并进入</button>
+    </div>
+    <div class="error" id="err-register" role="alert"></div>
+    <button class="account-link" type="button" onclick="showLogin()">已有账号？返回登录</button>
+  </form>
+  <div class="error" id="status-error" role="alert"></div>
+</div>
+
+<script>
+let registrationOpen = false;
+function showLogin() {
+  document.getElementById('form-register').classList.add('hidden');
+  document.getElementById('form-login').classList.remove('hidden');
+  document.getElementById('login-desc').textContent = '请输入账号和密码';
+  document.getElementById('username-login').focus();
+}
+function showRegistration() {
+  document.getElementById('form-login').classList.add('hidden');
+  document.getElementById('form-register').classList.remove('hidden');
+  document.getElementById('login-desc').textContent = '注册个人账号';
+  document.getElementById('registration-fields').classList.toggle('hidden', !registrationOpen);
+  document.getElementById('registration-note').textContent = registrationOpen
+    ? '注册后拥有独立词库、学习进度和对话账号。'
+    : '暂未开放注册，请联系管理员开通账号。';
+  document.getElementById('err-register').textContent = '';
+  if (registrationOpen) document.getElementById('username-register').focus();
+}
+async function checkStatus() {
+  try {
+  const r = await fetch(appURL('/api/auth/status'));
+  if (!r.ok) throw Error();
+  const s = await r.json();
+  if (s.authenticated) { window.location.href = appURL('/'); return; }
+  document.getElementById('form-setup').classList.toggle('hidden', s.password_set);
+  document.getElementById('form-login').classList.toggle('hidden', !s.password_set);
+  document.getElementById('login-desc').textContent = s.password_set ? '请输入账号和密码' : '首次使用，请设置访问密码';
+  registrationOpen = s.registration_open;
+  } catch (_) { document.getElementById('status-error').textContent = '服务暂时无法连接，请刷新重试'; }
+}
+
+async function doSetup() {
+  const p1 = document.getElementById('pwd1').value;
+  const p2 = document.getElementById('pwd2').value;
+  if (p1 !== p2) { document.getElementById('err1').textContent = '两次密码不一致'; return; }
+  if (p1.length < 8) { document.getElementById('err1').textContent = '密码至少8位'; return; }
+  const r = await fetch(appURL('/api/auth/setup'), {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({password: p1}),
+  });
+  const d = await r.json();
+  if (d.ok) { window.location.href = appURL('/'); }
+  else { document.getElementById('err1').textContent = d.error || '设置失败'; }
+}
+
+async function doLogin() {
+  const p = document.getElementById('pwd-login').value;
+  const r = await fetch(appURL('/api/auth/login'), {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({username: document.getElementById('username-login').value.trim(), password: p, remember: document.getElementById('remember').checked}),
+  });
+  const d = await r.json();
+  if (d.ok) { window.location.href = appURL('/'); }
+  else { document.getElementById('err2').textContent = d.error || '登录失败'; }
+}
+
+async function doRegister() {
+  const error=document.getElementById('err-register'), button=document.getElementById('register-submit');
+  if (button.disabled) return;
+  error.textContent='';
+  if (!registrationOpen) { showRegistration(); return; }
+  const username=document.getElementById('username-register').value.trim(), password=document.getElementById('pwd-register').value;
+  if (!/^[A-Za-z0-9_.-]{3,40}$/.test(username)) { error.textContent='账号需为 3–40 位字母、数字、点、下划线或短横线'; return; }
+  if (password.length<8) { error.textContent='密码至少 8 位'; return; }
+  if (password!==document.getElementById('pwd-register-confirm').value) { error.textContent='两次密码不一致'; return; }
+  button.disabled=true; button.textContent='正在注册…';
+  try {
+    const r=await fetch(appURL('/api/auth/register'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+    const d=await r.json();
+    if(r.ok) location.href=appURL('/');
+    else { error.textContent=d.error||'注册失败'; if(r.status===403) { registrationOpen=false; showRegistration(); error.textContent=d.error||'暂未开放注册，请联系管理员'; } }
+  } catch (_) { error.textContent='注册请求未完成，请检查网络后重试'; }
+  finally { button.disabled=false; button.textContent='注册并进入'; }
+}
+checkStatus();
+</script>
+</body>
+</html>

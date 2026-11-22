@@ -1,0 +1,13 @@
+# 英语单词背诵记忆系统 - 依赖
+flask>=3.0
+mdict-utils>=1.0.0
+beautifulsoup4>=4.12.0
+Pillow>=10.4
+fsrs>=6.0,<7
+jsonschema>=4.23
+waitress>=3.0
+# 如需 AI 回退功能，请配置 settings 中的 API Key
+# openai>=1.0.0
+
+# Offline morphology / derivations / synonym exclusion (bundled WordNet corpus)
+nltk==3.9.2

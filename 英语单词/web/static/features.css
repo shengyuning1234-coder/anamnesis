@@ -1,0 +1,132 @@
+.layout-controls {
+  position: fixed;
+  right: 18px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 60;
+  color: var(--text2);
+  font-size: .82rem;
+}
+.layout-controls summary,
+.layout-menu {
+  background: var(--surface-card);
+  border: 1px solid var(--border-glass, #ddd);
+  border-radius: 14px;
+  box-shadow: 0 5px 22px #28234618;
+  backdrop-filter: blur(18px);
+}
+.layout-controls summary {
+  list-style: none;
+  padding: 9px 13px;
+  cursor: pointer;
+}
+.layout-controls summary::-webkit-details-marker { display: none; }
+.layout-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  min-width: 150px;
+  padding: 6px;
+  display: grid;
+  gap: 3px;
+}
+.layout-menu button {
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  border-radius: 9px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+.layout-menu button:hover { background: rgba(var(--theme-p), .10); }
+.header-collapsed .topbar,
+.nav-collapsed .tab-nav {
+  display: none;
+}
+.layout-restore { display: none; }
+.header-collapsed.nav-collapsed .layout-restore {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--glass-border);
+}
+.quiz-map {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 14px 0;
+}
+.quiz-cell {
+  width: 29px;
+  height: 29px;
+  border: 1px solid #9996;
+  border-radius: 7px;
+  background: #9992;
+  color: inherit;
+}
+.quiz-cell.ready {
+  background: rgba(var(--theme-p), .20);
+}
+.quiz-cell.answered {
+  background: #40a57566;
+}
+.quiz-cell.skipped {
+  background: #f5b44c66;
+}
+.quiz-cell.current {
+  outline: 2px solid var(--primary);
+}
+.feature-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #9993;
+  padding: 12px 0;
+}
+.feature-row > div {
+  flex: 1;
+  min-width: 130px;
+}
+.feature-row small {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--text2);
+}
+.feature-section {
+  margin: 16px 0;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+.feature-note {
+  color: var(--text2);
+  line-height: 1.8;
+}
+.guide-list {
+  line-height: 1.9;
+  padding-left: 22px;
+}
+.provider-card {
+  padding: 12px;
+  border: 1px solid #9994;
+  border-radius: 12px;
+  margin: 12px 0;
+}
+.resume-banner {
+  margin: 12px 0;
+  padding: 14px;
+  border: 1px solid rgba(var(--theme-p), .33);
+  border-radius: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.guide-list li {
+  margin-bottom: 8px;
+}

@@ -1,0 +1,53 @@
+# Local environments, dependencies and generated outputs
+.venv*/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+node_modules/
+build/
+dist/
+deliverables/
+test-results/
+playwright-report/
+*.log
+*.tar.gz
+*.zip
+!/英语单词/resources/lexicons/wordnet.zip
+
+# Local settings and user data
+/.local/
+/.local-preview/
+/docker-data/
+/英语单词/data/
+/英语单词/web/static/uploads/
+.env
+.env.*
+!.env.example
+*.db
+*.db-*
+*.sqlite3
+*.sqlite3-*
+.api_token
+.apikey*
+.password
+.secret_key
+
+# Local dictionary files and generated lexical resources
+/朗文英汉/*
+!/朗文英汉/README.md
+/新世纪汉英/
+/汉英词典/
+/英语单词/resources/lexicons/ecdict.csv
+/英语单词/resources/lexicons/primary.txt
+/英语单词/resources/lexicons/tem8.txt
+/英语单词/resources/lexicons/*.download
+
+# Editor and system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.trae/
+.workbuddy/

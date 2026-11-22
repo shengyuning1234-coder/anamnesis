@@ -1,0 +1,34 @@
+# ============================================
+# 英语单词背诵记忆系统 — Docker Compose
+# 适用于绿联云 NAS (Linux + Docker)
+# ============================================
+
+name: anamnesis
+
+services:
+  word-app:
+    build: .
+    container_name: english-word-app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5050:5050"
+    volumes:
+      # 数据持久化：数据库、设置、API Key 等
+      - ./data:/app/data
+      # 词典文件挂载（将宿主机词典目录挂入容器）
+      # 请根据你 NAS 上词典文件的实际路径修改冒号前面的路径
+      - ../朗文英汉:/app/dict:ro
+    environment:
+      - PORT=5050
+      - HOST=0.0.0.0
+      - APP_DATA_DIR=/app/data
+      - ALLOW_INITIAL_SETUP=1
+      - LOCAL_DICT_PATH=/app/dict/oaldpe.mdx
+      - TZ=Asia/Shanghai
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5050/health')"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

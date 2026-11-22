@@ -1,0 +1,66 @@
+{
+  "sources": [
+    {
+      "repository": "skywind3000/ECDICT",
+      "revision": "bc015ed2e24a7abef49fc6dbbb7fe32c1dadaf8b",
+      "url": "https://raw.githubusercontent.com/skywind3000/ECDICT/bc015ed2e24a7abef49fc6dbbb7fe32c1dadaf8b/ecdict.csv",
+      "file": "ecdict.csv",
+      "sha256": "1a6947e04785db63613a92e14903cdae7954f7e84860b10e68e5c7cbb3f9c3cf",
+      "bytes": 65933428
+    },
+    {
+      "repository": "skywind3000/ECDICT",
+      "revision": "bc015ed2e24a7abef49fc6dbbb7fe32c1dadaf8b",
+      "url": "https://raw.githubusercontent.com/skywind3000/ECDICT/bc015ed2e24a7abef49fc6dbbb7fe32c1dadaf8b/LICENSE",
+      "file": "ECDICT-LICENSE.txt",
+      "sha256": "f8552dd246f61a4e064569eae6194a01c6b3d63b03bf27c6ca863593c549ed0f",
+      "bytes": 1063
+    },
+    {
+      "repository": "skywind3000/ECDICT",
+      "revision": "bc015ed2e24a7abef49fc6dbbb7fe32c1dadaf8b",
+      "url": "https://raw.githubusercontent.com/skywind3000/ECDICT/bc015ed2e24a7abef49fc6dbbb7fe32c1dadaf8b/README.md",
+      "file": "ECDICT-README.md",
+      "sha256": "0c3f95fc7e15f7eccf65feedb58ba3ebace1fe7b7cbdd1af60c9ace4cef9094b",
+      "bytes": 18414
+    },
+    {
+      "repository": "mahavivo/english-wordlists",
+      "revision": "395cebd583d97be61b065d281d16dc49c7e4a8b0",
+      "url": "https://raw.githubusercontent.com/mahavivo/english-wordlists/395cebd583d97be61b065d281d16dc49c7e4a8b0/%E5%B0%8F%E5%AD%A6%E8%8B%B1%E8%AF%AD%E5%A4%A7%E7%BA%B2%E8%AF%8D%E6%B1%87.txt",
+      "file": "primary.txt",
+      "sha256": "bb7581da02e735d368f1dd891cb10c8091688054164bbd8de4146280b4e9ce99",
+      "bytes": 2518
+    },
+    {
+      "repository": "mahavivo/english-wordlists",
+      "revision": "395cebd583d97be61b065d281d16dc49c7e4a8b0",
+      "url": "https://raw.githubusercontent.com/mahavivo/english-wordlists/395cebd583d97be61b065d281d16dc49c7e4a8b0/%E8%8B%B1%E8%AF%AD%E4%B8%93%E4%B8%9A%E6%98%9F%E6%A0%87%E5%85%AB%E7%BA%A7%E8%AF%8D%E6%B1%87.txt",
+      "file": "tem8.txt",
+      "sha256": "766b1f81906f4c0460f72299b87bd6b8fdb4a901d7852f0cef8f8959b522792e",
+      "bytes": 256862
+    },
+    {
+      "repository": "mahavivo/english-wordlists",
+      "revision": "395cebd583d97be61b065d281d16dc49c7e4a8b0",
+      "url": "https://raw.githubusercontent.com/mahavivo/english-wordlists/395cebd583d97be61b065d281d16dc49c7e4a8b0/README.md",
+      "file": "wordlists-README.md",
+      "sha256": "b224c4e3c2de000df2f0fd25d36225ec34ce9d99f2ac3237d28d97cf2b1008d6",
+      "bytes": 2089
+    },
+    {
+      "repository": "nltk/nltk_data",
+      "revision": "550b6625bcef1f2abff2ff770a5a0d272c9c6b2a",
+      "url": "https://raw.githubusercontent.com/nltk/nltk_data/550b6625bcef1f2abff2ff770a5a0d272c9c6b2a/packages/corpora/wordnet.zip",
+      "file": "wordnet.zip",
+      "sha256": "cbda5ea6eef7f36a97a43d4a75f85e07fccbb4f23657d27b4ccbc93e2646ab59",
+      "bytes": 10775600
+    }
+  ],
+  "counts": {
+    "entries": 770611,
+    "labels": 4307,
+    "wordnet": 206938
+  },
+  "wordlist_license": "No explicit license in upstream wordlists; retained locally with provenance; review before redistribution."
+}

@@ -1,0 +1,32 @@
+# Git
+.git/
+.gitignore
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# 数据文件（运行时挂载，不打包进镜像）
+data/
+test_upgrade.py
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/.apikey
+data/settings.json
+
+# 词典文件（运行时挂载，不打包进镜像）
+dict/
+
+# VS Code
+.vscode/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.crdownload

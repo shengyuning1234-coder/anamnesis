@@ -1,0 +1,44 @@
+name: anamnesis-macos-chat
+services:
+  vector:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: anamnesis_chat
+      POSTGRES_USER: anamnesis
+      POSTGRES_PASSWORD: ${CHAT_POSTGRES_PASSWORD:?Missing local runtime secret}
+    volumes:
+      - ./.local/chat-runtime/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U anamnesis -d anamnesis_chat]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  chat:
+    image: anamnesis:2026.10.25
+    platform: linux/amd64
+    entrypoint: [python, /opt/anamnesis-docker/local_chat_entrypoint.py]
+    init: true
+    ports:
+      - 127.0.0.1:5050:5050
+    depends_on:
+      vector:
+        condition: service_healthy
+    environment:
+      TZ: Asia/Shanghai
+      APP_PUBLIC_URL: http://127.0.0.1:5050
+      SESSION_COOKIE_NAME: session
+      VECTOR_DB: pgvector
+      PGVECTOR_DB_URL: postgresql://anamnesis:${CHAT_POSTGRES_PASSWORD}@vector:5432/anamnesis_chat
+      ENABLE_MEMORY_BACKGROUND_REVIEW: "false"
+    volumes:
+      - ./英语单词:/opt/anamnesis:ro
+      - ./docker:/opt/anamnesis-docker:ro
+      - ./英语单词/data:/data/words
+      - ./英语单词/data/openwebui:/data/openwebui
+      - ./朗文英汉:/opt/anamnesis-dictionaries:ro
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5052/health'); urllib.request.urlopen('http://127.0.0.1:5051/health')"]
+      interval: 15s
+      timeout: 5s
+      start_period: 120s
+      retries: 10

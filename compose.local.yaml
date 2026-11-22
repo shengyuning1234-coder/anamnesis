@@ -1,0 +1,21 @@
+name: anamnesis-local
+services:
+  anamnesis:
+    container_name: anamnesis-local
+    image: anamnesis:2026.10.31-full
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    init: true
+    shm_size: "1gb"
+    stop_grace_period: 40s
+    ports:
+      - "127.0.0.1:5050:5050"
+    environment:
+      TZ: Asia/Shanghai
+      APP_PUBLIC_URL: http://127.0.0.1:5050
+      ALLOW_INITIAL_SETUP: "1"
+    volumes:
+      - ./.local-preview/anamnesis:/data/words
+      - ./.local-preview/openwebui:/data/openwebui
