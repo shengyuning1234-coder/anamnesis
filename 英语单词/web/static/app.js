@@ -54,6 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ======= 背景系统 =======
 function initBackground(initialAppearance) {
   const appearance = initialAppearance || {};
+  applyCardOpacity(appearance.card_opacity ?? 78);
   if (appearance.background_type === "custom" && appearance.background_image_path) {
     applyBackground(appearance);
   }

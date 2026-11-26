@@ -1,0 +1,27 @@
+/* Surface colours retain the user's wallpaper palette and opacity. */
+:root {
+  --text: #202333;
+  --radius-panel: 24px;
+  --shadow: inset 0 1px 0 rgb(255 255 255 / .75), 0 8px 28px -18px rgb(48 56 83 / .30);
+}
+body {font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif}
+.app-background-container {
+  background: radial-gradient(ellipse at 12% 5%, rgba(var(--theme-p, 91,74,224), .17), transparent 54%),
+              radial-gradient(ellipse at 90% 25%, #dceee8, transparent 48%),
+              radial-gradient(ellipse at 60% 98%, #f8efdf, transparent 56%), #f3f6fa;
+}
+.page-bars {backdrop-filter: blur(18px) saturate(1.1)}
+.topbar .logo {letter-spacing: -.045em; font-weight: 700}
+.topbar-action, .tab-nav .tab-btn, .filter-chip, .btn-primary {border-radius: 999px}
+a.topbar-action {display: inline-flex; align-items: center; text-decoration: none}
+.tab-nav .tab-btn.active {background: var(--primary); color: #fff; box-shadow: var(--shadow)}
+.stat-card, .group-card, .quiz-card, .word-list-pane, .word-detail-pane {
+  background-color: rgba(255,255,255,var(--card-opacity,.78));
+  border-radius: 22px; box-shadow: var(--shadow);
+}
+.stat-card strong, .stat-card b {font-variant-numeric: tabular-nums}
+@media(max-width: 640px) {
+  .word-list-pane, .word-detail-pane {border-radius: 14px}
+  .topbar-right {overflow-x: auto}
+  .topbar-right > * {flex-shrink: 0}
+}
